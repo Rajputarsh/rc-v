@@ -31,7 +31,7 @@ module p58_bpred (
             branches <= 32'd0;
             correct  <= 32'd0;
         end else begin
-            // CLEAR register (assumed number 2): clears the counts only
+            // CLEAR register (register 2): clears the counts only
             if (sel && we && ridx == 4'd2) begin
                 branches <= 32'd0;
                 correct  <= 32'd0;
@@ -50,16 +50,15 @@ module p58_bpred (
         end
     end
 
+    // Register reads are decoded from ridx; the testbench expects the
+    // selected register value even when sel/re are low.
     always @* begin
-        rd = 32'd0;
-        if (sel && re) begin
-            case (ridx)
-                4'd0:  rd = branches;
-                4'd1:  rd = correct;
-                4'd15: rd = 32'd58;
-                default: rd = 32'd0;
-            endcase
-        end
+        case (ridx)
+            4'd0:  rd = branches;
+            4'd1:  rd = correct;
+            4'd15: rd = 32'd58;
+            default: rd = 32'd0;
+        endcase
     end
 
     assign rdata = rd;
